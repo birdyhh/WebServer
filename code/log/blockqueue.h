@@ -12,44 +12,43 @@ public:
     explicit BlockDeque(size_t MaxCapacity = 1000);
 
     ~BlockDeque();
-
+    //清空队列
     void clear();
-
+    //判断是否为空
     bool empty();
-
+    //判断是否超过或等于最大容量
     bool full();
-
+    //关闭并唤醒所有线程
     void Close();
-
+    //返回队列大小
     size_t size();
-
+    //返回最大容量
     size_t capacity();
-
+    //返回队列前端对象
     T front();
-
+    //返回队列后端对象
     T back();
-
+    //压入队列后端
     void push_back(const T &item);
-
+    //压入队列前端
     void push_front(const T &item);
-
+    //弹出，并将item赋值为弹出对象
     bool pop(T &item);
-
+    //在指定时间内弹出，并将item赋值为弹出对象
     bool pop(T &item, int timeout);
-
+    //唤醒一个线程
     void flush();
 
 private:
     std::deque<T> deq_;
-
+    //队列容量
     size_t capacity_;
-
+    //锁
     std::mutex mtx_;
 
     bool isClose_;
-
+    //定义两个条件变量，只要有一个进入wait状态，这个线程就会进入wait状态
     std::condition_variable condConsumer_;
-
     std::condition_variable condProducer_;
 };
 
@@ -125,7 +124,7 @@ void BlockDeque<T>::push_back(const T &item)
 {
     std::lock_guard<std::mutex> locker(mtx_);
     while(deq_.size() >= capacity_)
-    {//被虚假唤醒后再次判断，若数据超过容量，则应继续休眠。
+    {//被虚假唤醒后再次判断，若数据依旧超过容量，则应继续休眠。
         condProducer_.wait(locker);
     }
     deq_.push_back(item);
@@ -137,7 +136,7 @@ void BlockDeque<T>::push_front(const T &item)
 {
     std::lock_guard<std::mutex> locker(mtx_);
     while(deq_.size() >= capacity_)
-    {//被虚假唤醒后再次判断，若数据超过容量，则应继续休眠。
+    {//被虚假唤醒后再次判断，若数据依旧超过容量，则应继续休眠。
         condProducer_.wait(locker);
     }
     deq_.push_front(item);
