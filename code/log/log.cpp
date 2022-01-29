@@ -162,3 +162,55 @@ void Log::write(int level,const char*format,...)
         buff_.RetrieveAll();
     }
 }
+
+void Log::AppendLogLevelTitle(int level)
+{
+    switch (level)
+    {
+    case 0:
+        buff_.Append("[debug]: ", 9);
+        break;
+    case 1:
+        buff_.Append("[info] : ", 9);
+        break;
+    case 2:
+        buff_.Append("[warn] : ", 9);
+        break;
+    case 3:
+        buff_.Append("[error]: ", 9);
+        break;
+    default:
+        buff_.Append("[info] : ", 9);
+        break;
+    }
+}
+
+void Log::AsyncWrite_()
+{
+    string str = "";
+    while(deque_->pop(str))
+    {
+        lock_guard<mutex> locker(mtx_);
+        fputs(str.c_str(), fp_);
+    }
+}
+
+void Log::flush()
+{
+    if(isAsync_)
+    {
+        deque_->flush();
+    }
+    fflush(fp_);
+}
+
+Log* Log::Instance()
+{
+    static Log inst;
+    return &inst;
+}
+
+void Log::FlushLogThread()
+{
+    Log::Instance()->AsyncWrite_();
+}
