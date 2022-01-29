@@ -48,7 +48,9 @@ private:
 
     bool isClose_;
     //定义两个条件变量，只要有一个进入wait状态，这个线程就会进入wait状态
+    //当队列为空时，消费者条件变量将锁定线程，当队列非空时将唤醒线程
     std::condition_variable condConsumer_;
+    //当队列为满时，生产者条件变量将锁定线程，当队列非满的时候将唤醒线程
     std::condition_variable condProducer_;
 };
 
@@ -78,6 +80,7 @@ void BlockDeque<T>::Close()
     condConsumer_.notify_all();
 }
 
+//激活一个被消费者条件变量锁定的线程
 template <class T>
 void BlockDeque<T>::flush()
 {

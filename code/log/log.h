@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <assert.h>
-//#include <sys/stat.h>
+#include <sys/stat.h>
 #include <mutex>
 #include <string>
 #include <thread>
@@ -24,12 +24,12 @@ public:
     static void FlushLogThread();
 
     void write(int level, const char *format, ...);
-
+    //刷新
     void flush();
-
+    //获得level
     int GetLevel();
-
-    void SetLevel();
+    //设定level
+    void SetLevel(int level);
 
     bool IsOpen() { return isOpen_; }
 
@@ -47,7 +47,7 @@ private:
     static const int LOG_NAME_LEN = 256;
     static const int MAX_LINES = 50000;
 
-    const char *paht_;
+    const char *path_;
     const char *suffix_;
 
     int MAX_LINES_;
