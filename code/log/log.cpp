@@ -54,7 +54,7 @@ void Log::init(int level = 1,const char*path, const char* suffix,
         isAsync_ = true;
         if(!deque_)
         {
-            unique_ptr<BlockDeque<std::string>> newDeque(new BlockDeque<std::string>);
+            unique_ptr<BlockDeque<string>> newDeque(new BlockDeque<std::string>);
             deque_ = move(newDeque);
 
             unique_ptr<thread> newThread(new thread(FlushLogThread));
