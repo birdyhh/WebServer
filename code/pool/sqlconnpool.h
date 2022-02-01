@@ -17,7 +17,7 @@ public:
 
     MYSQL *GetConn();
 
-    void FreeConn(MYSQL *conn);
+    void FreeConn(MYSQL *sql);
 
     int GetFreeConnCount();
 
