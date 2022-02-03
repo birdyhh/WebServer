@@ -16,6 +16,14 @@ public:
     HttpResponse();
     ~HttpResponse();
 
+    void Init(const std::string &srcDir, std::string &path, bool isKeepAlive = false, int code = -1);
+    void MakeResponse(Buffer &buff);
+    void UnmapFile();
+    char *File();
+    size_t FileLen() const;
+    void ErrorContent(Buffer &buff, std::string message);
+    int Code() const { return code_; }
+
 private:
     void AddStateLine_(Buffer &buff);
     void AddHeader_(Buffer &buff);
