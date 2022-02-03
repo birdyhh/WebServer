@@ -40,26 +40,37 @@ public:
 
     HttpRequest() { Init(); }
     ~HttpRequest() = default;
-
+    //初始化
     void Init();
+    //解析
     bool parse(Buffer &buff);
-    
+    //返回地址
     std::string path() const;
+    //返回&地址
     std::string &path();
+    
     std::string method() const;
+    
     std::string version() const;
+    
     std::string GetPost(const std::string &key) const;
+    
     std::string GetPost(const char *key) const;
-
+    //是否保持连接
     bool IsKeepAlive() const;
 
 private:
+    //解析请求行
     bool ParseRequestLine_(const std::string &line);
+    //解析请求头部 
     void ParseHeader_(const std::string &line);
+    //解析请求正文
     void ParseBody_(const std::string &line);
-
+    //解析地址
     void ParsePath_();
+    //解析post
     void ParsePost_();
+    //解析url
     void ParseFormUrlencoded_();
 
     static bool UserVerify(const std::string &name, const std::string &pwd, bool isLogin);
