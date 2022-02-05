@@ -15,18 +15,27 @@ class HttpResponse
 public:
     HttpResponse();
     ~HttpResponse();
-
+    //初始化
     void Init(const std::string &srcDir, std::string &path, bool isKeepAlive = false, int code = -1);
+    //创建response包
     void MakeResponse(Buffer &buff);
+    //释放stat
     void UnmapFile();
+    //返回mmFile_
     char *File();
+    //返回文件大小
     size_t FileLen() const;
+    //插入错误内容
     void ErrorContent(Buffer &buff, std::string message);
+    //返回code
     int Code() const { return code_; }
 
 private:
+    //插入状态行
     void AddStateLine_(Buffer &buff);
+    //插入头部行
     void AddHeader_(Buffer &buff);
+    //插入内容
     void AddContent_(Buffer &buff);
 
     void ErrorHtml_();
