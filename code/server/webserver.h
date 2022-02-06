@@ -29,12 +29,37 @@ public:
     void Start();
 
 private:
+    //初始化Socket
     bool InitSocket_();
+    //初始化epoll事件模式
     void InitEventMode_(int trigMode);
-    
+    //添加客户端
+    void AddClient_(int fd, sockaddr_in addr);
+
+    //处理监听事件
+    void DealListen_();
+    //处理写事件
+    void DealWrite_(HttpConn* client);
+    //处理读事件
+    void DealRead_(HttpConn* client);
+
+    //发送错误
+    void SendError_(int fd, const char *info);
+    //
+    void ExtentTime_(HttpConn *client);
+    //关闭连接
+    void CloseConn_(HttpConn *client);
+
+    void OnRead_(HttpConn* client);
+    void OnWrite_(HttpConn* client);
+    void OnProcess_(HttpConn* client);
 
     static const int MAX_FD = 65536;
-    int port_;//端口
+
+    //将文件描述符设置为非阻塞
+    static int SetFdNonblock(int fd);
+
+    int port_; //端口
     bool openLinger_;
     int timeoutMS_;//毫秒
     bool isClose_;
@@ -47,7 +72,7 @@ private:
     std::unique_ptr<HeapTimer> timer_;
     std::unique_ptr<ThreadPool> threadpool_;
     std::unique_ptr<Epoller> epoller_;
-    std::unordered_map<int, HttpConn> users;
+    std::unordered_map<int, HttpConn> users_;
 };
 
 #endif
