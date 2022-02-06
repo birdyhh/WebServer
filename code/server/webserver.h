@@ -2,9 +2,21 @@
 #define __WEBSERVER_H_
 
 #include <unordered_map>
-#include <memory>
+#include <fcntl.h>
+#include <unistd.h>
+#include <assert.h>
+#include <errno.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include "epoller.h"
+#include "../log/log.h"
+#include "../timer/heaptimer.h"
+#include "../pool/sqlconnpool.h"
+#include "../pool/sqlconnRAII.h"
+#include "../pool/threadpool.h"
+#include "../http/httpconn.h"
 
 class WebServer{
 public:
@@ -17,6 +29,10 @@ public:
     void Start();
 
 private:
+    bool InitSocket_();
+    void InitEventMode_(int trigMode);
+    
+
     static const int MAX_FD = 65536;
     int port_;//端口
     bool openLinger_;
