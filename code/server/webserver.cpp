@@ -90,6 +90,7 @@ void WebServer::Start()
     {
         if(timeoutMS_ > 0)
         {
+            //获得定时器内时间的最小值，以保证在这时间内可以接收到连接
             timeMS = timer_->GetNextTick();
         }
         int eventCnt = epoller_->Wait(timeMS);
@@ -131,6 +132,7 @@ void WebServer::AddClient_(int fd, sockaddr_in addr)
     users_[fd].init(fd, addr);
     if(timeoutMS_ > 0)
     {
+        //到时关闭
         timer_->add(fd, timeoutMS_, std::bind(&WebServer::CloseConn_, this, &users_[fd]));
     }
     epoller_->AddFd(fd, EPOLLIN | connEvent_);

@@ -33,30 +33,30 @@ class HeapTimer
 public:
     HeapTimer() { heap_.reserve(64); }
     ~HeapTimer() { clear(); }
-    //调整节点时间
+    //调整连接时间
     void adjust(int id, int timeout);
-    //增加节点
+    //增加连接
     void add(int id, int timeOut, const TimeoutCallBack &cb);
     //删除指定id结点，并触发回调函数
     void doWork(int id);
     //清空vector和map
     void clear();
-    //清除超时节点
+    //清除超时连接
     void tick();
-    //弹出节点
+    //弹出连接
     void pop();
-    //获得下个节点的时间
+    //获得下个连接的时间
     int GetNextTick();
 
 private:
-    //删除节点
+    //删除连接
     void del_(size_t i);
-    //如果一个节点比它的父节点小（最小堆），那么需要将它同父节点交换位置。
-    //这样是这个节点在数组的位置上升。
+    //如果一个连接比它的父连接小（最小堆），那么需要将它同父连接交换位置。
+    //这样是这个连接在数组的位置上升。
     void siftup_(size_t i);
-    // 如果一个节点比它的子节点大（最小堆），那么需要将它向下移动。
+    // 如果一个连接比它的子连接大（最小堆），那么需要将它向下移动。
     bool siftdown_(size_t index, size_t n);
-    //交换两个节点
+    //交换两个连接
     void SwapNode_(size_t i, size_t j);
     //用数组表示最小堆
     std::vector<TimerNode> heap_;

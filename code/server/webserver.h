@@ -45,13 +45,16 @@ private:
 
     //发送错误
     void SendError_(int fd, const char *info);
-    //
+    //刷新时间
     void ExtentTime_(HttpConn *client);
     //关闭连接
     void CloseConn_(HttpConn *client);
 
+    //读函数
     void OnRead_(HttpConn* client);
+    //写函数
     void OnWrite_(HttpConn* client);
+    
     void OnProcess_(HttpConn* client);
 
     static const int MAX_FD = 65536;
