@@ -290,14 +290,49 @@ bool WebServer::InitSocket_()
         return false;
     }
 
+    //设置优雅关闭
     ret = setsockopt(listenFd_, SOL_SOCKET, SO_LINGER, &optLinger, sizeof(optLinger));
     if(ret < 0)
     {
         close(listenFd_);
-        LOG_ERROR("Init linger error!".port_);
+        LOG_ERROR("Init linger error!",port_);
         return false;
     }
 
+    //设置端口复用
     int optval = 1;
-    
+    ret = setsockopt(listenFd_, SOL_SOCKET, SO_REUSEADDR, (const void *)&optval, sizeof(int));
+    if(ret < 0)
+    {
+        close(listenFd_);
+        LOG_ERROR("set socket setsockopt error!");
+        return false;
+    }
+
+    ret = bind(listenFd_, (struct sockaddr *)&addr, sizeof(addr));
+    if(ret < 0)
+    {
+        close(listenFd_);
+        LOG_ERROR("Bind Port:%d error!",port_);
+        return false;
+    }
+
+    ret = listen(listenFd_, 6);
+    if(ret < 0)
+    {
+        close(listenFd_);
+        LOG_ERROR("listen Port:%d error!",port_);
+        return false;
+    }
+
+    ret = epoller_->AddFd(listenFd_, listenEvent_ | EPOLLIN);
+    if(ret == 0)
+    {
+        close(listenFd_);
+        LOG_ERROR("Add listen error!");
+        return false;
+    }
+    SetFdNonblock(listenFd_);
+    LOG_INFO("Server port: %d", port_);
+    return true;
 }
