@@ -1,6 +1,6 @@
 # WebServer
 C++ Linux WebServer
-用c++14实现高性能的WEB服务器，经过webbanch压力测试可以实现上万的QPS
+用c++14实现高性能的WEB服务器
 
 ## 流程
 ```
