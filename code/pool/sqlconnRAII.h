@@ -11,7 +11,7 @@ public:
         assert(connpool);
         *sql = connpool->GetConn();
         sql_ = *sql;
-        connpool_ = connpool_;
+        connpool_ = connpool;
     }
 
     ~SqlConnRAII()

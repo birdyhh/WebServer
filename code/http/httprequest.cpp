@@ -326,11 +326,11 @@ int HttpRequest::ConverHex(char ch)
     return ch;
 }
 
-const std::unordered_set<std::string> DEFAULT_HTML{
+const std::unordered_set<std::string> HttpRequest::DEFAULT_HTML{
     "/index","/register","/login",
     "/welcome","/video","/picture",
 };
 
-const std::unordered_map<std::string, int> DEFAULT_HTML_TAG{
+const std::unordered_map<std::string, int> HttpRequest::DEFAULT_HTML_TAG{
     {"/register.html",0},{"/login.html",1},
 };

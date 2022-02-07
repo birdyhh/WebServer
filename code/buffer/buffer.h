@@ -19,7 +19,7 @@ public:
     //等待传送字节
     size_t PrependableBytes() const;
     //读取数据？
-    const char *Buffer::Peek() const;
+    const char *Peek() const;
     //确保len字节内可写
     void EnsureWriteable(size_t len);
     //已写字节

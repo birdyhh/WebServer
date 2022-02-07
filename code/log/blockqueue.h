@@ -73,7 +73,7 @@ void BlockDeque<T>::Close()
     {
         //locker在离开该局部的时候会被析构，同时解锁
         std::lock_guard<std::mutex> locker(mtx_);
-        dep_.clear();
+        deq_.clear();
         isClose_ = true;
     }
     condProducer_.notify_all();
@@ -119,13 +119,13 @@ template <class T>
 size_t BlockDeque<T>::capacity()
 {
     std::lock_guard<std::mutex> locker(mtx_);
-    return capacity_();
+    return capacity_;
 }
 
 template <class T>
 void BlockDeque<T>::push_back(const T &item)
 {
-    std::lock_guard<std::mutex> locker(mtx_);
+    std::unique_lock<std::mutex> locker(mtx_);
     while(deq_.size() >= capacity_)
     {//被虚假唤醒后再次判断，若数据依旧超过容量，则应继续休眠。
         condProducer_.wait(locker);
@@ -137,7 +137,7 @@ void BlockDeque<T>::push_back(const T &item)
 template <class T>
 void BlockDeque<T>::push_front(const T &item)
 {
-    std::lock_guard<std::mutex> locker(mtx_);
+    std::unique_lock<std::mutex> locker(mtx_);
     while(deq_.size() >= capacity_)
     {//被虚假唤醒后再次判断，若数据依旧超过容量，则应继续休眠。
         condProducer_.wait(locker);
@@ -163,7 +163,7 @@ bool BlockDeque<T>::full()
 template <class T>
 bool BlockDeque<T>::pop(T &item)
 {
-    std::lock_guard<std::mutex> locker(mtx_);
+    std::unique_lock<std::mutex> locker(mtx_);
     while(deq_.empty())
     {
         condConsumer_.wait(locker);
@@ -181,7 +181,7 @@ bool BlockDeque<T>::pop(T &item)
 template <class T>
 bool BlockDeque<T>::pop(T &item,int timeout)
 {
-    std::lock_guard<std::mutex> locker(mtx_);
+    std::unique_lock<std::mutex> locker(mtx_);
     while(deq_.empty())
     {
         if(condConsumer_.wait_for(locker,std::chrono::seconds(timeout))
@@ -196,8 +196,8 @@ bool BlockDeque<T>::pop(T &item,int timeout)
     }
     item = deq_.front();
     deq_.pop_front();
-    condProducer_();
+    condProducer_.notify_one();
     return true;
 }
 
-#endif BLOCKQUEUE_H
+#endif //BLOCKQUEUE_H
